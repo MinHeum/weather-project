@@ -1,8 +1,9 @@
 import React from "react";
-import { View, Text, StyleSheet, StatusBar } from "react-native";
+import { View, Text, StyleSheet, StatusBar, ScrollView, RefreshControl, SafeAreaView } from "react-native";
 import PropTypes from "prop-types";
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
+import { watchPositionAsync } from "expo-location";
 
 const weatherOptions = {
     Thunderstorm: {
@@ -97,25 +98,46 @@ const weatherOptions = {
     },
 }
 
+const wait = (timeout) => {
+    return new Promise(resolve => {
+      setTimeout(resolve, timeout);
+    });
+}
+
 export default function Weather({ temp, condition }) {
+    const [refreshing, setRefreshing] = React.useState(false);
+
+     const onRefresh = React.useCallback(() => {
+        setRefreshing(true);
+
+        wait(2000).then(() => setRefreshing(false));
+    }, []);
+
+
     return (
-        <LinearGradient
-            colors={weatherOptions[condition].gradient}
-            style={styles.container}>
-            <View style={styles.halfContainer}>
-                <Ionicons 
-                    name={weatherOptions[condition].iconName}
-                    size={92}
-                    color="white"
-                />
-                <Text style={styles.temp}>{temp}˚</Text>
-            </View>
-            <View style={{...styles.halfContainer, ...styles.textContainer}}>
-                <Text style={styles.title}>{weatherOptions[condition].title}</Text>
-                <Text style={styles.subTitle}>{weatherOptions[condition].subTitle}</Text>
-            </View>
-            <StatusBar barStyle="light-content" />
-        </LinearGradient>
+        <SafeAreaView>
+            <ScrollView >
+                <LinearGradient
+                    colors={weatherOptions[condition].gradient}
+                    style={styles.container}
+                >
+                <View style={styles.halfContainer}>
+                    <Ionicons 
+                        name={weatherOptions[condition].iconName}
+                        size={92}
+                        color="white"
+                    />
+                    <Text style={styles.temp}>{temp}˚</Text>
+                </View>
+                <View style={{...styles.halfContainer, ...styles.textContainer}}>
+                    <Text style={styles.title}>{weatherOptions[condition].title}</Text>
+                    <Text style={styles.subTitle}>{weatherOptions[condition].subTitle}</Text>
+                </View>
+                <StatusBar barStyle="light-content" />
+                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+                </LinearGradient>
+            </ScrollView>
+        </SafeAreaView>
     );
 }
 
@@ -154,6 +176,8 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: "center",
         alignItems: "center",
+        marginTop: 120,
+        marginBottom: 120
     },
     title:{
         fontWeight: "600",
