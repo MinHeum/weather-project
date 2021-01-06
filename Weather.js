@@ -106,21 +106,28 @@ const wait = (timeout) => {
 
 export default function Weather({ temp, condition }) {
     const [refreshing, setRefreshing] = React.useState(false);
-
-     const onRefresh = React.useCallback(() => {
+    const onRefresh = React.useCallback(() => {
         setRefreshing(true);
-
         wait(2000).then(() => setRefreshing(false));
     }, []);
 
 
     return (
-        <SafeAreaView>
-            <ScrollView >
-                <LinearGradient
-                    colors={weatherOptions[condition].gradient}
-                    style={styles.container}
-                >
+    <LinearGradient
+        colors={weatherOptions[condition].gradient}
+        style={styles.container}
+    >
+        <SafeAreaView style={styles.container}>
+            <ScrollView 
+                refreshControl = {<RefreshControl
+                                    refreshing={refreshing}
+                                    onRefresh={onRefresh} 
+                                    tintColor="#9ba2b4"
+                                    title="Refreshing..."
+                                    titleColor="white"
+                                />}
+            >
+            
                 <View style={styles.halfContainer}>
                     <Ionicons 
                         name={weatherOptions[condition].iconName}
@@ -129,15 +136,20 @@ export default function Weather({ temp, condition }) {
                     />
                     <Text style={styles.temp}>{temp}˚</Text>
                 </View>
+                
                 <View style={{...styles.halfContainer, ...styles.textContainer}}>
-                    <Text style={styles.title}>{weatherOptions[condition].title}</Text>
-                    <Text style={styles.subTitle}>{weatherOptions[condition].subTitle}</Text>
+                    <Text style={styles.title}>
+                        {weatherOptions[condition].title}
+                    </Text>
+                    <Text style={styles.subTitle}>
+                        {weatherOptions[condition].subTitle}
+                    </Text>
                 </View>
+
                 <StatusBar barStyle="light-content" />
-                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-                </LinearGradient>
-            </ScrollView>
+              </ScrollView>   
         </SafeAreaView>
+    </LinearGradient>
     );
 }
 
@@ -176,8 +188,8 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: "center",
         alignItems: "center",
-        marginTop: 120,
-        marginBottom: 120
+        paddingTop: 100,
+        paddingBottom: 100
     },
     title:{
         fontWeight: "600",
