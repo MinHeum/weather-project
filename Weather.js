@@ -1,9 +1,11 @@
 import React from "react";
-import { View, Text, StyleSheet, StatusBar, ScrollView, RefreshControl, SafeAreaView } from "react-native";
+import { View, Text, StyleSheet, StatusBar, ScrollView, SafeAreaView } from "react-native";
 import PropTypes from "prop-types";
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { watchPositionAsync } from "expo-location";
+import { RefreshControl } from 'react-native-web-refresh-control'
+
 
 const weatherOptions = {
     Thunderstorm: {
