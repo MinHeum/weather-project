@@ -12,7 +12,7 @@ export default function App(){
   const [condition, setCondition] = useState("")
   const [isLoading, setIsLoading] = useState(true)
 
-  getWeather = async (latitude, longitude) => {
+  const getWeather = async (latitude, longitude) => {
     const { 
       data: {
         main: {temp},
@@ -26,7 +26,7 @@ export default function App(){
       setIsLoading(false);
   };
 
-  getLocation = async() => {
+  const getLocation = async() => {
     try{
       await Location.requestPermissionsAsync();
       const {
