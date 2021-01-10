@@ -1,10 +1,14 @@
 import React from "react";
+import { Alert } from 'react-native';
 import { View, Text, StyleSheet, StatusBar, ScrollView, SafeAreaView } from "react-native";
 import PropTypes from "prop-types";
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
-import { watchPositionAsync } from "expo-location";
+import * as Location from 'expo-location';
 import { RefreshControl } from 'react-native-web-refresh-control'
+import axios from "axios";
+
+const API_KEY = "fc994814797e05607c384a9ecb3f612c";
 
 
 const weatherOptions = {
@@ -108,8 +112,37 @@ const wait = (timeout) => {
 
 export default function Weather({ temp, condition }) {
     const [refreshing, setRefreshing] = React.useState(false);
+
+    const getWeather = async (latitude, longitude) => {
+        const { 
+          data: {
+            main: {temp},
+              weather
+              }
+            } = await axios.get(
+            `http://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${API_KEY}&units=metric`
+          );
+          this.condition = weather[0].main;
+          this.temp = temp;
+      };
+    
+      const getLocation = async() => {
+        try{
+          await Location.requestPermissionsAsync();
+          const {
+            coords: { latitude, longitude }
+          } = await Location.getCurrentPositionAsync();
+          getWeather(latitude, longitude)
+        }
+        catch(error) {
+          Alert.alert("Can't find you.", "So sad")
+        }
+      }
+
+
     const onRefresh = React.useCallback(() => {
         setRefreshing(true);
+        getLocation();
         wait(2000).then(() => setRefreshing(false));
     }, []);
 
